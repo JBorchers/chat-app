@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat'
 
 export default class Chat extends React.Component {
@@ -46,16 +46,26 @@ export default class Chat extends React.Component {
     this.props.navigation.setOptions({ title: name });
 
     return (
-      // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: this.props.route.params.bgColor }}>
-      //   <Text style={{ color: 'white', fontWeight: 'bold' }}>Welcome!</Text>
-      // </View>
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-      />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: this.props.route.params.bgColor }}>
+        <View style={styles.chatWrapper}>
+            <GiftedChat
+                messages={this.state.messages}
+                onSend={messages => this.onSend(messages)}
+                user={{
+                  _id: 1,
+                }}
+              />
+            {/* prevents keyboard from covering messages in input field (for older android devices)  */}
+            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+            </View>
+        </View>
     );
   };
 }
+
+const styles = StyleSheet.create({
+  chatWrapper: {
+    flex: 1,
+    width: '100%'
+  },
+})
