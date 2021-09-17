@@ -1,6 +1,11 @@
 import React from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat'
+import { View, Text, KeyboardAvoidingView, Platform, StyleSheet, Button } from 'react-native';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import NetInfo from '@react-native-community/netinfo';
+
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -39,12 +44,66 @@ export default class Chat extends React.Component {
     // stores and retrieves the chat messages the users send
     this.referenceChatMessages = firebase.firestore().collection("messages");
 
+  };
+
+  async getMessages() {
+    let messages = '';
+    let uid = '';
+    try {
+      messages = await AsyncStorage.getItem('messages') || [];
+      uid = await AsyncStorage.getItem('uid');
+
+      this.setState({
+        messages: JSON.parse(messages),
+        uid: JSON.parse(uid),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+    } catch (error) {
+      console.log(error.message);
+    }
   }
+
+  async deleteMessages() {
+  try {
+    await AsyncStorage.removeItem('messages');
+    this.setState({
+      messages: []
+    })
+  } catch (error) {
+    console.log(error.message);
+  }
+}
   
+  // Hides toolbar when the user is offline
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
+  }
 
   componentDidMount() {
     // const name = this.props.route.params.username;
     // this.props.navigation.setOptions({ title: name });
+
+    // immediately checks if the user is online
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        // User is online
+        console.log('online');
+        this.setState({
+          isConnected: true,
+        });
+
+    this.getMessages();
+    this.renderInputToolbar();
 
     this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
      if (!user) {
@@ -69,34 +128,19 @@ export default class Chat extends React.Component {
        .orderBy("createdAt", "desc")
        .onSnapshot(this.onCollectionUpdate);
     });
+  } else {
+        // User is offline
+        console.log('offline');
+        this.setState({
+          isConnected: false,
+        }),
+
+          this.getMessages();
+      }
+    });
   }
 
 
-
-    // this.setState({
-    //   // each message requires an ID, a creation date, and a user object
-    //   messages: [
-    //     {
-    //       _id: 1,
-    //       text: 'Hello developer',
-    //       createdAt: new Date(),
-    //       // user objects require a user ID, name, and avatar
-    //       user: {
-    //         _id: 2,
-    //         name: 'React Native',
-    //         avatar: 'https://placeimg.com/140/140/any',
-    //       },
-    //     },
-    //     {
-    //       _id: 2,
-    //       text: 'this is a system message',
-    //       createdAt: new Date(),
-    //       system: true,
-    //     },
-    //   ],
-      
-    // });
-  // }
 
   addMessage() {
     const message = this.state.messages[0];
@@ -117,6 +161,7 @@ export default class Chat extends React.Component {
    }),
       () => {
         this.addMessage();
+        this.saveMessages();
       }
     );
   }
@@ -145,7 +190,12 @@ export default class Chat extends React.Component {
 
   componentWillUnmount() {
     // stop authentication
-    this.authUnsubscribe();
+    if (this.state.isConnected == false) {
+    } else {
+      // stop online authentication
+      this.authUnsubscribe();
+      this.unsubscribe();
+    }
   }
 
   renderBubble(props) {
@@ -176,8 +226,10 @@ export default class Chat extends React.Component {
                 messages={this.state.messages}
                 renderBubble={this.renderBubble.bind(this)}
                 messages={this.state.messages}
+                renderInputToolbar={this.renderInputToolbar.bind(this)}
                 onSend={messages => this.onSend(messages)}
                 user={this.state.user}
+                onLongPress={() => this.deleteMessages()}
               />
             {/* prevents keyboard from covering messages in input field (for older android devices)  */}
             {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
