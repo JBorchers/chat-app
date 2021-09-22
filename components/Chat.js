@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, StyleSheet, Button } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, StyleSheet, Button, LogBox } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import MapView from "react-native-maps";
 import CustomActions from './CustomActions';
@@ -47,6 +47,9 @@ export default class Chat extends React.Component {
     // references the messages collection from firebase DB
     // stores and retrieves the chat messages the users send
     this.referenceChatMessages = firebase.firestore().collection("messages");
+    LogBox.ignoreLogs(['Animated.event now requires a second argument for options',
+    'Cannot update a component from inside the function body of a different component.',
+    'expo-permissions is now deprecated'])
     
   };
   
@@ -156,7 +159,7 @@ export default class Chat extends React.Component {
     this.referenceChatMessages.add({
       uid: this.state.uid,
       _id: message._id,
-      text: message.text,
+      text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
       avatar: 'https://placeimg.com/140/140/any',

@@ -17,6 +17,28 @@ export default class CustomActions extends React.Component {
       location: null,
     };
   }
+
+// pickImage = async () => { //choose an image from user's phone
+    // const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    
+
+    // try {
+    //   console.log("status", status);
+    //   if (status === 'granted') {
+    //     const result = await ImagePicker.launchImageLibraryAsync({
+    //       mediaTypes: ImagePicker.MediaTypeOptions.Images, //only allow images
+    //     }).catch(error => console.log(error));
+    //       console.log(result);
+    //     if (!result.cancelled) {
+    //       // const imageUrl = await this.uploadImage(result.uri);
+    //       // this.props.onSend({ image: imageUrl });
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    // }
+  // }
+
   
   // Choose image from device library
   pickImage = async () => {
