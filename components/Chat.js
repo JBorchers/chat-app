@@ -162,7 +162,6 @@ export default class Chat extends React.Component {
       text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
-      avatar: 'https://placeimg.com/140/140/any',
       // to send image/location
       image: message.image || null,
       location: message.location || null,
@@ -198,6 +197,7 @@ export default class Chat extends React.Component {
         user: {
           _id: data.user._id,
           name: data.user.name,
+          avatar: 'https://placeimg.com/140/140/any',
         },
       });
     });
