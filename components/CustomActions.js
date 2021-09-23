@@ -18,27 +18,6 @@ export default class CustomActions extends React.Component {
     };
   }
 
-// pickImage = async () => { //choose an image from user's phone
-    // const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-    
-
-    // try {
-    //   console.log("status", status);
-    //   if (status === 'granted') {
-    //     const result = await ImagePicker.launchImageLibraryAsync({
-    //       mediaTypes: ImagePicker.MediaTypeOptions.Images, //only allow images
-    //     }).catch(error => console.log(error));
-    //       console.log(result);
-    //     if (!result.cancelled) {
-    //       // const imageUrl = await this.uploadImage(result.uri);
-    //       // this.props.onSend({ image: imageUrl });
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log(error.message);
-    // }
-  // }
-
   
   // Choose image from device library
   pickImage = async () => {
@@ -57,27 +36,6 @@ export default class CustomActions extends React.Component {
     } catch (error) { console.log(error.message) }
   }
 
-  
-  // // Lets the user pick an image from the device's image library
-  // imagePicker = async () => {
-  //   // expo permission
-  //   const { status } = await Camera.requestPermissionsAsync();
-  //   try {
-  //     if (status === "granted") {
-  //       // pick image
-  //       const result = await ImagePicker.launchImageLibraryAsync({
-  //         mediaTypes: ImagePicker.MediaTypeOptions.Images, // only images are allowed
-  //       }).catch((error) => console.log(error));
-  //       // canceled process
-  //       if (!result.cancelled) {
-  //         const imageUrl = await this.uploadImageFetch(result.uri);
-  //         this.props.onSend({ image: imageUrl });
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
   
 
   // Lets the user take a photo with device's camera
@@ -117,7 +75,7 @@ export default class CustomActions extends React.Component {
         }
       }
     } catch (error) { console.log(error.message) }
-  }
+  } 
   
   //Upload picture to firebse cloud storage
   uploadImageFetch = async (uri) => {
