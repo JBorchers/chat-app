@@ -49,7 +49,9 @@ export default class Chat extends React.Component {
     this.referenceChatMessages = firebase.firestore().collection("messages");
     LogBox.ignoreLogs(['Animated.event now requires a second argument for options',
     'Cannot update a component from inside the function body of a different component.',
-    'expo-permissions is now deprecated'])
+    'expo-permissions is now deprecated',
+    'Setting a timer for a long period of time, i.e. multiple minutes',
+  ])
     
   };
   
